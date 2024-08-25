@@ -1,7 +1,7 @@
+#1.0
 import numpy as np
 
 random_number = np.random.randint(0,100)
-
 print("Guess a random number between 1-100")
 
 while True:
