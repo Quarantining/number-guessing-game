@@ -1,5 +1,7 @@
 import numpy as np
-v = "1.2.5" # version (displays on title screen).
+v = "1.2.6" # version (displays on title screen).
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Global Stats
 wins = 0
@@ -8,18 +10,48 @@ too_low = 0
 user_guesses = 0
 fewest_guesses = 0
 most_guesses = 0
+perfect_games = 0
 
-# AI Global Stats
+# AI (random) Global Stats
 ai_wins = 0
 ai_too_high = 0
 ai_too_low = 0
 ai_guesses = 0
 ai_fewest_guesses = 0
 ai_most_guesses = 0
+ai_perfect_games = 0
+
+# AI (intelligent) Global Stats
+intelligent_wins = 0
+intelligent_too_high = 0
+intelligent_too_low = 0
+intelligent_guesses = 0
+intelligent_fewest_guesses = 0
+intelligent_most_guesses = 0
+intelligent_perfect_games = 0
+
+# AI (perfect) global Stats
+perfect_wins = 0
+perfect_too_high = 0
+perfect_too_low = 0
+perfect_guesses = 0
+perfect_fewest_guesses = 0
+perfect_most_guesses = 0
+perfect_perfect_games = 0
+
+# AI (hacks) Global Stats
+hacks_wins = 0
+hacks_too_high = 0
+hacks_too_low = 0
+hacks_guesses = 0
+hacks_fewest_guesses = 0
+hacks_most_guesses = 0
+hacks_perfect_games = 0
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # title screen variable
-title_screen = f"""
-- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+title_screen = f"""- - - - - - - - - - - - - - - - - - - - - - - - - - - 
            > > > - -[MAIN MENU] - - < < <
 
 [1] EASY | [2] NORMAL | [3] HARD | [4] IMPOSSIBLE 
@@ -28,6 +60,11 @@ title_screen = f"""
 version {v}
 - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 """
+
+# welcome screen
+welcome_screen = f"""- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Welcome to 'NUMBER GUESSING GAME'!
+{title_screen}"""
 
 # is set to True when selecting model, when set back to false
 # returns user to main menu.
@@ -47,7 +84,6 @@ Select Model:
 """
 
 # these are the global stats (not f stats).
-
 stats_screen = f"""
 - - - - - - - - - - - - - - - - - - - - - - - - - - - 
             > > > - -[STATS] - - < < <
@@ -91,34 +127,37 @@ AI Stats (RANDOM):
     wins with most guesses --> 
 
 AI Stats (INTELLIGENT):
-    wins --> {ai_wins}
-    perfect AI wins --> 
+    wins --> {intelligent_wins}
+    perfect AI wins --> {intelligent_perfect_games}
     total AI guesses --> {ai_guesses}
-    high guesses --> {ai_too_high}
-    low guesses --> {ai_too_low}
-    wins with fewest guesses -->
-    wins with most guesses --> 
+    high guesses --> {intelligent_too_high}
+    low guesses --> {intelligent_too_low}
+    wins with fewest guesses --> {intelligent_fewest_guesses}
+    wins with most guesses --> {intelligent_most_guesses}
 
 AI STATS (PERFECT):
-    wins --> {ai_wins}
-    perfect AI wins --> 
+    wins --> {perfect_wins}
+    perfect AI wins --> {perfect_perfect_games}
     total AI guesses --> {ai_guesses}
-    high guesses --> {ai_too_high}
-    low guesses --> {ai_too_low}
-    wins with fewest guesses -->
-    wins with most guesses --> 
+    high guesses --> {perfect_too_high}
+    low guesses --> {perfect_too_low}
+    wins with fewest guesses --> {perfect_fewest_guesses}
+    wins with most guesses --> {perfect_most_guesses}
 
 AI STATS (HACKS):
-    wins --> {ai_wins}
-    perfect AI wins --> 
-    total AI guesses --> {ai_guesses}
-    high guesses --> {ai_too_high}
-    low guesses --> {ai_too_low}
-    wins with fewest guesses -->
-    wins with most guesses --> 
+    wins --> {hacks_wins}
+    perfect AI wins --> {hacks_perfect_games}
+    total AI guesses --> {hacks_guesses}
+    high guesses --> {hacks_too_high}
+    low guesses --> {hacks_too_low}
+    wins with fewest guesses --> {hacks_fewest_guesses}
+    wins with most guesses --> {hacks_most_guesses}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - -
 """
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 # function for game code
 def number_guessing_game(difficulty):
 
@@ -166,6 +205,8 @@ def number_guessing_game(difficulty):
         else:
             print("Error")
 
+
+
 # function for AI model to guess instead of user.
 def ai_player_mode(difficulty):
     random_number = np.random.randint(1,1000) # var that sets random num.
@@ -201,22 +242,41 @@ def ai_player_mode(difficulty):
     except TypeError:
         print("Error")
 
+
 def ai_intelligent_mode():
     print("Coming soon.")
+
+
+
 def ai_perfect_mode():
     print("Coming soon.")
+
+
+
 def ai_hacks_mode():
     print("Coming soon.")
+
+
+
+def plot_game_data():
+    print("Coming soon.")
+
+
+
+def hints():
+    print("Coming soon.")
+
+
+
 def stats_sum():
     print("Coming soon.")
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 # prints title screen
-print("- - - - - - - - - - - - - - - - - - - - - - - - - - - ")
-print("Welcome to 'NUMBER GUESSING GAME'!") # this gets printed above title screen upon opening the game for the first time to welcome user.
-print(title_screen) # this prints the rest of the title screen (with all the options and such).
-
+print(welcome_screen) # this gets printed once upon opening game.
 
 
 # user selection mode
@@ -295,16 +355,22 @@ while True: # while loop so game doesn't end after game is finished.
                     ai_too_high += f_ai_too_high
                     ai_too_low += f_ai_too_low
                     ai_guesses += f_ai_too_low + f_ai_too_high
+
                 elif ai_mode_select == "2": # intelligent
                     print("Coming soon..")
+
                 elif ai_mode_select == "3": # perfect only
                     print("Coming soon..")
+
                 elif ai_mode_select == "4": # hacks
                     print("Coming soon..")
+
                 elif ai_mode_select =="?": # info
                     print(ai_model_info)
+
                 elif ai_mode_select == "7":
                     print(ai_stats_screen)
+
                 elif ai_mode_select == "0":
                     in_ai_menu = False
                     print("returning to MAIN MENU")
@@ -313,7 +379,6 @@ while True: # while loop so game doesn't end after game is finished.
                 else:
                     print("Error")
 
-
         # prints the users stats. Vars listed above.
         elif user_mode_selection == 7:
             print(stats_screen) # these are the global stats (not f stats)
@@ -321,11 +386,14 @@ while True: # while loop so game doesn't end after game is finished.
         # ends program.
         elif user_mode_selection == 0:
             confirm_stop = input("Do you want to quit program? Your stats wont be saved. (yes/no): ") # checks with user to confirm quiting
+
             if confirm_stop == "yes": # if user types "yes"
                 print("program stopped.") # tells user program is stopping
                 break # ends program
+
             elif confirm_stop == "no": # if user types "no"
                 print(title_screen) # program does not stop
+
             else: # for any other input
                 print("Error") # prints an error message
 
@@ -335,3 +403,26 @@ while True: # while loop so game doesn't end after game is finished.
 
     except ValueError:
         print("Value Error.")
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+# [Ideas List]:
+# add intelligent ai model that guesses half way between the highest possible number and lowest guess.
+# add a perfect model where the guess and random number are both random, meaning the AI needs to guess corectly on it's first try.
+# add a hacks model that always guesses the number correctly.
+# add a way to plot the stats of each AI model onto a graph.
+# add a way to import and export user/ai stats with a txt file (or something similar).
+# add intelligent hints that give the user clues about what type of number they are guessing (like is it odd, even, etc).
+# add a game score and level system.
+# add achievements.
+# add cheats ex) tells you what the correct number is before guessing.
+# add easter eggs
+# add function to sum stats after each game.
+# add a clear stats function (per model) that is password protected.
+# clear the screen after each game as keep menus more readable.
+# add easter eggs
+# add function to sum stats after each game.
+# add a clear stats function (per model) that is password protected.
+# clear the screen after each game as keep menus more readable. 
