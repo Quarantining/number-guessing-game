@@ -1,5 +1,5 @@
 import numpy as np
-v = "1.2.6" # version (displays on title screen).
+v = "1.2.7" # version (displays on title screen).
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -37,7 +37,8 @@ perfect_too_low = 0
 perfect_guesses = 0
 perfect_fewest_guesses = 0
 perfect_most_guesses = 0
-perfect_perfect_games = 0
+perfect_ai_guesses = 0
+most_correct_guesses = 0
 
 # AI (hacks) Global Stats
 hacks_wins = 0
@@ -137,8 +138,8 @@ AI Stats (INTELLIGENT):
 
 AI STATS (PERFECT):
     wins --> {perfect_wins}
-    perfect AI wins --> {perfect_perfect_games}
-    total AI guesses --> {ai_guesses}
+    perfect AI wins --> {perfect_ai_guesses}
+    total AI guesses --> {perfect_guesses}
     high guesses --> {perfect_too_high}
     low guesses --> {perfect_too_low}
     wins with fewest guesses --> {perfect_fewest_guesses}
@@ -249,7 +250,36 @@ def ai_intelligent_mode():
 
 
 def ai_perfect_mode():
-    print("Coming soon.")
+    f_perfect_ai_guesses = 0
+    attempts = 0
+    f_most_correct_guesses = 0
+
+    for i in range(1000):
+        random_number = np.random.randint(1,1000)
+        ai_guess = np.random.randint(1,1000)
+
+        attempts += 1
+        print(f"> {(str(ai_guess))} attempt: {attempts}")
+
+        if ai_guess == random_number:
+            print(f"You win! The correct number was {random_number}!")
+            print(f"It took the model {f_perfect_ai_guesses} attempts to guess first try!")
+            f_perfect_ai_guesses += 1
+            f_most_correct_guesses += 1
+
+        elif ai_guess > random_number:
+            print(f"Too high! The correct number was {random_number}")
+
+        elif ai_guess < random_number:
+            print(f"Too low! The correct number was {random_number}")
+
+        else:
+            print("Error")
+            break
+
+    print(f"The PERFECT model was able to guess the correct number {f_perfect_ai_guesses} times in {attempts} attempts.")
+    return f_perfect_ai_guesses, f_most_correct_guesses
+
 
 
 
@@ -344,9 +374,12 @@ while True: # while loop so game doesn't end after game is finished.
 
         # selects AI MODE
         elif user_mode_selection == 6:
-            in_ai_menu = True
-            print(ai_mode_screen)
+
+            in_ai_menu = True # while True user will be stuck in AI menus
+            print(ai_mode_screen) # prints the AI menu screen
+
             while in_ai_menu == True:
+
                 ai_mode_select = input("> ") # prompts user to select AI mode.
 
                 if ai_mode_select == "1": # random
@@ -355,12 +388,23 @@ while True: # while loop so game doesn't end after game is finished.
                     ai_too_high += f_ai_too_high
                     ai_too_low += f_ai_too_low
                     ai_guesses += f_ai_too_low + f_ai_too_high
+                    print(ai_mode_screen)
 
                 elif ai_mode_select == "2": # intelligent
                     print("Coming soon..")
 
                 elif ai_mode_select == "3": # perfect only
-                    print("Coming soon..")
+                    f_perfect_ai_guesses, f_most_correct_guesses = ai_perfect_mode() # takes f_perfect_ai_guesses (number of guesses the ai made) & f_most_correct_guesses (the amount of times it correctly guessed the number).
+                    perfect_wins += f_perfect_ai_guesses # adds perfect wins to global perfect ai stats
+                    perfect_ai_guesses += f_perfect_ai_guesses # also adds perfect games to normal wins (because it can only win a perfect game).
+
+                    if f_most_correct_guesses >= perfect_most_guesses: # checks how many perfect games it won in a single session.
+                        perfect_most_guesses = f_most_correct_guesses # if its greater or equal, the stats get updated (replaced). This is to show its best session, not total sessions (unlike most other stats).
+                        print(f"New High Score! Your model guessed {perfect_most_guesses} in a single game!")
+                    else: # otherwise, the decision tree ends.
+                        print(f"No new scores. Your highest score is still {perfect_most_guesses}.")
+
+                    print(ai_mode_screen)
 
                 elif ai_mode_select == "4": # hacks
                     print("Coming soon..")
@@ -378,6 +422,7 @@ while True: # while loop so game doesn't end after game is finished.
 
                 else:
                     print("Error")
+
 
         # prints the users stats. Vars listed above.
         elif user_mode_selection == 7:
@@ -422,7 +467,3 @@ while True: # while loop so game doesn't end after game is finished.
 # add function to sum stats after each game.
 # add a clear stats function (per model) that is password protected.
 # clear the screen after each game as keep menus more readable.
-# add easter eggs
-# add function to sum stats after each game.
-# add a clear stats function (per model) that is password protected.
-# clear the screen after each game as keep menus more readable. 
