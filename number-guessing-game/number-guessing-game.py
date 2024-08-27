@@ -1,27 +1,124 @@
 import numpy as np
-v = "1.2.4" # version (displays on title screen).
+v = "1.2.5" # version (displays on title screen).
 
 # Global Stats
 wins = 0
 too_high = 0
 too_low = 0
 user_guesses = 0
+fewest_guesses = 0
+most_guesses = 0
 
 # AI Global Stats
 ai_wins = 0
 ai_too_high = 0
 ai_too_low = 0
 ai_guesses = 0
+ai_fewest_guesses = 0
+ai_most_guesses = 0
 
 # title screen variable
-title_screen = f"""- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+title_screen = f"""
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+           > > > - -[MAIN MENU] - - < < <
+
 [1] EASY | [2] NORMAL | [3] HARD | [4] IMPOSSIBLE 
-[5] CUSTOM | [6] AI MODE | [7] STATS | [8] ENDS GAME
+[5] CUSTOM | [6] AI MODE | [7] STATS | [0] QUIT/END GAME
 
 version {v}
 - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 """
 
+# is set to True when selecting model, when set back to false
+# returns user to main menu.
+in_ai_menu = False
+
+# AI mode selection screen
+ai_mode_screen = """
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            > > > - -[AI MODES] - - < < <
+
+Select Model:
+[1] RANDOM | [2] INTELLIGENT | [3] PERFECT ONLY 
+[4] HACKS | [7] STATS | [?] INFO | [0] EXIT
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+"""
+
+# these are the global stats (not f stats).
+
+stats_screen = f"""
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            > > > - -[STATS] - - < < <
+
+Your Stats:
+    wins --> {wins}
+    perfect wins --> 
+    total guesses --> {user_guesses}
+    high guesses --> {too_high}
+    low guesses --> {too_low}
+    wins with fewest guesses -->
+    wins with most guesses --> 
+    
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+"""
+
+ai_model_info = """
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            > > > - -[AI MODEL INFO] - - < < <
+    
+[1] RANDOM --> guesses randomly with no logic.
+[2] INTELLIGENT --> guesses 50% between the highest possible value and the previous guess
+[3] PERFECT ONLY --> both the AI guess and random number are randomly selected each game;
+the AI must guess in 1 attempt.    
+[4] HACKS --> the AI will always guess the correct number.   
+[EXIT] --> returns you to main menu.
+    
+- - - - - - - - - - - - - - - - - - - - - - - - - - -                 
+"""
+
+ai_stats_screen = f"""
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+            > > > - -[AI STATS] - - < < <
+AI Stats (RANDOM):
+    wins --> {ai_wins}
+    perfect AI wins --> 
+    total AI guesses --> {ai_guesses}
+    high guesses --> {ai_too_high}
+    low guesses --> {ai_too_low}
+    wins with fewest guesses -->
+    wins with most guesses --> 
+
+AI Stats (INTELLIGENT):
+    wins --> {ai_wins}
+    perfect AI wins --> 
+    total AI guesses --> {ai_guesses}
+    high guesses --> {ai_too_high}
+    low guesses --> {ai_too_low}
+    wins with fewest guesses -->
+    wins with most guesses --> 
+
+AI STATS (PERFECT):
+    wins --> {ai_wins}
+    perfect AI wins --> 
+    total AI guesses --> {ai_guesses}
+    high guesses --> {ai_too_high}
+    low guesses --> {ai_too_low}
+    wins with fewest guesses -->
+    wins with most guesses --> 
+
+AI STATS (HACKS):
+    wins --> {ai_wins}
+    perfect AI wins --> 
+    total AI guesses --> {ai_guesses}
+    high guesses --> {ai_too_high}
+    low guesses --> {ai_too_low}
+    wins with fewest guesses -->
+    wins with most guesses --> 
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+"""
 # function for game code
 def number_guessing_game(difficulty):
 
@@ -78,27 +175,40 @@ def ai_player_mode(difficulty):
     f_ai_too_high = 0  # when Ai is too high
     f_ai_too_low = 0  # when AI is too low
     f_ai_guesses = guess_count
+    try:
+        for i in range(99999): # the AI gets 99999 attempts to guess the correct num.
 
-    for i in range(99999): # the AI gets 99999 attempts to guess the correct num.
-        ai_guess = np.random.randint(1,1000) # ai guess is randomly generated.
-        guess_count += 1 # adds +1 guess each iteration of for loop.
+            ai_guess = np.random.randint(1,1000) # ai guess is randomly generated.
+            guess_count += 1 # adds +1 guess each iteration of for loop.
 
-        if ai_guess == random_number:
-            print(f"> {ai_guess}")
-            print(f"You win! The correct number was {random_number}!")
-            print(f"It took the AI {guess_count} attempts.") # prints the total attempts it took the AI to guess the correct num.
-            f_ai_wins += 1
-            return f_ai_wins, f_ai_too_high, f_ai_too_low, f_ai_guesses
-        elif ai_guess > random_number:
-            print(f"> {ai_guess}")
-            f_ai_too_high += 1
-            print("Too high!")
-        elif ai_guess < random_number:
-            print(f"> {ai_guess}")
-            f_ai_too_low += 1
-            print("Too low!")
-        else:
-            print("Error") # just incase
+            if ai_guess == random_number:
+                print(f"> {ai_guess}")
+                print(f"You win! The correct number was {random_number}!")
+                print(f"It took the AI {guess_count} attempts.") # prints the total attempts it took the AI to guess the correct num.
+                f_ai_wins += 1
+                return f_ai_wins, f_ai_too_high, f_ai_too_low, f_ai_guesses
+            elif ai_guess > random_number:
+                print(f"> {ai_guess}")
+                f_ai_too_high += 1
+                print("Too high!")
+            elif ai_guess < random_number:
+                print(f"> {ai_guess}")
+                f_ai_too_low += 1
+                print("Too low!")
+            else:
+                print("Error") # just incase
+
+    except TypeError:
+        print("Error")
+
+def ai_intelligent_mode():
+    print("Coming soon.")
+def ai_perfect_mode():
+    print("Coming soon.")
+def ai_hacks_mode():
+    print("Coming soon.")
+def stats_sum():
+    print("Coming soon.")
 
 
 
@@ -174,34 +284,39 @@ while True: # while loop so game doesn't end after game is finished.
 
         # selects AI MODE
         elif user_mode_selection == 6:
-            f_ai_wins, f_ai_too_high, f_ai_too_low, f_ai_guesses = ai_player_mode(1000)
-            ai_wins += f_ai_wins
-            ai_too_high += f_ai_too_high
-            ai_too_low += f_ai_too_low
-            ai_guesses += f_ai_too_low + f_ai_too_high
-            print(title_screen)
+            in_ai_menu = True
+            print(ai_mode_screen)
+            while in_ai_menu == True:
+                ai_mode_select = input("> ") # prompts user to select AI mode.
+
+                if ai_mode_select == "1": # random
+                    f_ai_wins, f_ai_too_high, f_ai_too_low, f_ai_guesses = ai_player_mode(1000)
+                    ai_wins += f_ai_wins
+                    ai_too_high += f_ai_too_high
+                    ai_too_low += f_ai_too_low
+                    ai_guesses += f_ai_too_low + f_ai_too_high
+                elif ai_mode_select == "2": # intelligent
+                    print("Coming soon..")
+                elif ai_mode_select == "3": # perfect only
+                    print("Coming soon..")
+                elif ai_mode_select == "4": # hacks
+                    print("Coming soon..")
+                elif ai_mode_select =="?": # info
+                    print(ai_model_info)
+                elif ai_mode_select == "7":
+                    print(ai_stats_screen)
+                elif ai_mode_select == "0":
+                    in_ai_menu = False
+                    print("returning to MAIN MENU")
+                    print(title_screen)
+
+                else:
+                    print("Error")
 
 
         # prints the users stats. Vars listed above.
         elif user_mode_selection == 7:
-            print(f"""
-- - - - - - - - - - - - - - - - - - - - - - - - - - - 
-            > > > - -[STATS] - - < < <
-
-Your Stats:
-    wins --> {wins}
-    total guesses --> {user_guesses}
-    high guesses --> {too_high}
-    low guesses --> {too_low}
-    
-AI Stats:
-    wins --> {ai_wins}
-    total AI guesses --> {ai_guesses}
-    high guesses --> {ai_too_high}
-    low guesses --> {ai_too_low}
-    
-- - - - - - - - - - - - - - - - - - - - - - - - - - - 
-""") # these are the global stats (not f stats)
+            print(stats_screen) # these are the global stats (not f stats)
 
         # ends program.
         elif user_mode_selection == 0:
@@ -220,13 +335,3 @@ AI Stats:
 
     except ValueError:
         print("Value Error.")
-
-
-# add AI mode (one where it plays itself, one where it tries to guess the number first try).
-# add HINTS where it gives a hint about the number. Ex) is the number divisible by 2? (yes/no).
-# rounds counter (per game).
-# perfect games (added to stats).
-# some type of score
-# achievements.
-# AI stats.
-# Add way for user to export and import their stats.
