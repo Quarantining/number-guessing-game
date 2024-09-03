@@ -1,5 +1,7 @@
 import numpy as np
-v = "1.2.7" # version (displays on title screen).
+import os
+
+v = "1.2.8" # version (displays on title screen).
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -55,8 +57,8 @@ hacks_perfect_games = 0
 title_screen = f"""- - - - - - - - - - - - - - - - - - - - - - - - - - - 
            > > > - -[MAIN MENU] - - < < <
 
-[1] EASY | [2] NORMAL | [3] HARD | [4] IMPOSSIBLE 
-[5] CUSTOM | [6] AI MODE | [7] STATS | [0] QUIT/END GAME
+[1] USER MODE [6] AI MODE | [7] STATS | [0] QUIT/END GAME
+
 
 version {v}
 - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -67,9 +69,15 @@ welcome_screen = f"""- - - - - - - - - - - - - - - - - - - - - - - - - - -
 Welcome to 'NUMBER GUESSING GAME'!
 {title_screen}"""
 
-# is set to True when selecting model, when set back to false
-# returns user to main menu.
-in_ai_menu = False
+user_mode_screen = """
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+           > > > - -[USER MODE] - - < < <
+Select Mode:
+[1] EASY | [2] NORMAL | [3] HARD 
+[4] IMPOSSIBLE | [5] CUSTOM | [0] QUIT
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+"""
 
 # AI mode selection screen
 ai_mode_screen = """
@@ -84,23 +92,7 @@ Select Model:
 
 """
 
-# these are the global stats (not f stats).
-stats_screen = f"""
-- - - - - - - - - - - - - - - - - - - - - - - - - - - 
-            > > > - -[STATS] - - < < <
-
-Your Stats:
-    wins --> {wins}
-    perfect wins --> 
-    total guesses --> {user_guesses}
-    high guesses --> {too_high}
-    low guesses --> {too_low}
-    wins with fewest guesses -->
-    wins with most guesses --> 
-    
-- - - - - - - - - - - - - - - - - - - - - - - - - - - 
-"""
-
+# gives a description about what each AI model does.
 ai_model_info = """
 - - - - - - - - - - - - - - - - - - - - - - - - - - - 
             > > > - -[AI MODEL INFO] - - < < <
@@ -115,98 +107,86 @@ the AI must guess in 1 attempt.
 - - - - - - - - - - - - - - - - - - - - - - - - - - -                 
 """
 
-ai_stats_screen = f"""
-- - - - - - - - - - - - - - - - - - - - - - - - - - -
-            > > > - -[AI STATS] - - < < <
-AI Stats (RANDOM):
-    wins --> {ai_wins}
-    perfect AI wins --> 
-    total AI guesses --> {ai_guesses}
-    high guesses --> {ai_too_high}
-    low guesses --> {ai_too_low}
-    wins with fewest guesses -->
-    wins with most guesses --> 
-
-AI Stats (INTELLIGENT):
-    wins --> {intelligent_wins}
-    perfect AI wins --> {intelligent_perfect_games}
-    total AI guesses --> {ai_guesses}
-    high guesses --> {intelligent_too_high}
-    low guesses --> {intelligent_too_low}
-    wins with fewest guesses --> {intelligent_fewest_guesses}
-    wins with most guesses --> {intelligent_most_guesses}
-
-AI STATS (PERFECT):
-    wins --> {perfect_wins}
-    perfect AI wins --> {perfect_ai_guesses}
-    total AI guesses --> {perfect_guesses}
-    high guesses --> {perfect_too_high}
-    low guesses --> {perfect_too_low}
-    wins with fewest guesses --> {perfect_fewest_guesses}
-    wins with most guesses --> {perfect_most_guesses}
-
-AI STATS (HACKS):
-    wins --> {hacks_wins}
-    perfect AI wins --> {hacks_perfect_games}
-    total AI guesses --> {hacks_guesses}
-    high guesses --> {hacks_too_high}
-    low guesses --> {hacks_too_low}
-    wins with fewest guesses --> {hacks_fewest_guesses}
-    wins with most guesses --> {hacks_most_guesses}
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - -
-"""
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # function for game code
-def number_guessing_game(difficulty):
+def number_guessing_game():
+    global wins, too_high, too_low, user_guesses
+    print(user_mode_screen)
 
-    # random number (selected by user)
-    random_number = difficulty
-    f_wins = 0 # when user selects correct number
-    f_too_high = 0 # when user is too high
-    f_too_low = 0 # when user is too low
-    f_user_guesses = 0 # total guesses (var not used).
+    difficulty_selection = int(input("> ")) # input to select difficulty.
+    max_num = 0 # sets the maximum number that can be generated.
+
+    if difficulty_selection == 1: # easy
+        max_num = 10
+
+    elif difficulty_selection == 2: # normal
+        max_num = 50
+
+    elif difficulty_selection == 3: # hard
+        max_num = 100
+
+    elif difficulty_selection == 4: # very hard
+        max_num = 1000
+
+    elif difficulty_selection == 5:
+        max_num = int(input("Select maximum number: "))
+    else:
+        print("Error")
+
+    random_number = np.random.randint(1, max_num)  # sets the random number
+    print(f"Guess the random number between 1-{max_num}") # tells user to guess num between 0-{max_num}
 
     # while loop runs until random_number is guessed by user.
     while True:
         # user input (only takes ints).
         user_input = int(input("> ")) # 0 to end program, > 0 to guess number.
+
         if user_input == 0: # stops program
             confirm_stop = input("do you want to quit game? (yes/no): ") # confirms that user wants to quit
             if confirm_stop == "yes": # ends game
                 print("game quit.")
-                return f_wins, f_too_high, f_too_low, f_user_guesses # returns f stats and game ends
+                break
             elif confirm_stop == "no": # returns user game
                 print("game not quit.")
             else: # if user doesn't type "yes" or "no"
                 print("Error. returning to game.") # returns user to game.
 
         # if user guesses correctly
-        elif user_input == random_number:  #
+        elif user_input == random_number:
             print(f'You win! The correct number was {random_number}!')
-            f_wins += 1 # adds +1 to f_wins when user guesses correct number.\
-            f_user_guesses += 1 # adds guess
-            return f_wins, f_too_high, f_too_low, f_user_guesses # packs f stats (gets added to global stats outside of function).
+            wins += 1 # adds +1 to f_wins when user guesses correct number.\
+            user_guesses += 1 # adds guess
+            print("[0] RETURN MAIN MENU [1] PLAY AGAIN.")
+            user_input_after_win = int(input("> "))
+            if user_input_after_win == 0:
+                clear_screen()
+                print(title_screen)
+                break
+            elif user_input_after_win == 1:
+               clear_screen()
+               print(user_mode_screen)
+
+            else:
+                print("Error")
 
         # if user guess is too high.
         elif user_input > random_number:
             print("Too high!")
-            f_user_guesses += 1
-            f_too_high += 1 # adds 1 to too_high counter
+            user_guesses += 1
+            too_high += 1 # adds 1 to too_high counter
 
         # if user guess is too low.
         elif user_input < random_number:
             print("Too low!")
-            f_user_guesses += 1
-            f_too_low += 1 # adds 1 to too_low counter
+            user_guesses += 1
+            too_low += 1 # adds 1 to too_low counter
 
         # for anything else.
         else:
             print("Error")
 
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # function for AI model to guess instead of user.
 def ai_player_mode(difficulty):
@@ -243,6 +223,7 @@ def ai_player_mode(difficulty):
     except TypeError:
         print("Error")
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 def ai_intelligent_mode():
     print("Coming soon.")
@@ -281,21 +262,28 @@ def ai_perfect_mode():
     return f_perfect_ai_guesses, f_most_correct_guesses
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 def ai_hacks_mode():
     print("Coming soon.")
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 def plot_game_data():
     print("Coming soon.")
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 def hints():
     print("Coming soon.")
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 def stats_sum():
@@ -305,72 +293,90 @@ def stats_sum():
 # - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
+# function that clears the screen.
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+def user_stats_screen():
+    # these are the global stats (not f stats).
+    return  f"""
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            > > > - -[STATS] - - < < <
+
+Your Stats:
+    wins --> {wins}
+    perfect wins --> 
+    total guesses --> {user_guesses}
+    high guesses --> {too_high}
+    low guesses --> {too_low}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+"""
+
+
+def ai_stats_screen():
+    # shows that stats of all AI models.
+    return f"""
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+            > > > - -[AI STATS] - - < < <
+AI Stats (RANDOM):
+    wins --> {ai_wins}
+    perfect AI wins --> 
+    total AI guesses --> {ai_guesses}
+    high guesses --> {ai_too_high}
+    low guesses --> {ai_too_low}
+    wins with fewest guesses -->
+    wins with most guesses --> 
+    
+AI Stats (INTELLIGENT):
+    wins --> {intelligent_wins}
+    perfect AI wins --> {intelligent_perfect_games}
+    total AI guesses --> {ai_guesses}
+    high guesses --> {intelligent_too_high}
+    low guesses --> {intelligent_too_low}
+    wins with fewest guesses --> {intelligent_fewest_guesses}
+    wins with most guesses --> {intelligent_most_guesses}
+
+AI STATS (PERFECT):
+    wins --> {perfect_wins}
+    perfect AI wins --> {perfect_ai_guesses}
+    total AI guesses --> {perfect_guesses}
+    high guesses --> {perfect_too_high}
+    low guesses --> {perfect_too_low}
+    wins with fewest guesses --> {perfect_fewest_guesses}
+    wins with most guesses --> {perfect_most_guesses}
+
+AI STATS (HACKS):
+    wins --> {hacks_wins}
+    perfect AI wins --> {hacks_perfect_games}
+    total AI guesses --> {hacks_guesses}
+    high guesses --> {hacks_too_high}
+    low guesses --> {hacks_too_low}
+    wins with fewest guesses --> {hacks_fewest_guesses}
+    wins with most guesses --> {hacks_most_guesses}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - -
+"""
+
+# is set to True when selecting model, when set back to false
+# returns user to main menu.
+in_ai_menu = False
+
 # prints title screen
 print(welcome_screen) # this gets printed once upon opening game.
-
 
 # user selection mode
 while True: # while loop so game doesn't end after game is finished.
     try:
         # this is the user selection to choose what option from the main title screen.
         user_mode_selection = int(input("> "))
+        clear_screen()
 
         # selects "easy" mode.
         if user_mode_selection == 1: # selects the easy mode by the user.
-            random_number = np.random.randint(1,10) # sets the random number
-            print("Guess the random number between 0-10") # tells user (this is hard coded for each mode).
-            f_wins, f_too_high, f_too_low, f_user_guesses = number_guessing_game(random_number) # inputs the random number into the function (that is then used for the game).
-                                                                                # f_wins, f_too_high, etc stand for function wins, fucntion too_highs, etc. It takes the values from that game and sets these f to values.
-            wins += f_wins # we then take the f values and ADD them to the global stats.
-            too_high += f_too_high # this is done for all three.
-            too_low += f_too_low # and again..
-            user_guesses += f_user_guesses
-            print(title_screen) # title screen is shown again so user can select new game or exit.
-
-        # selects "normal" mode.
-        elif user_mode_selection == 2:
-            random_number = np.random.randint(1,50)
-            print("Guess the random number between 0-50")
-            f_wins, f_too_high, f_too_low, f_user_guesses = number_guessing_game(random_number)
-            wins += f_wins
-            too_high += f_too_high
-            too_low += f_too_low
-            user_guesses += f_user_guesses
-            print(title_screen)
-
-        # selects "hard" mode.
-        elif user_mode_selection == 3:
-            random_number = np.random.randint(1,100)
-            print("Guess the random number between 0-100")
-            f_wins, f_too_high, f_too_low, f_user_guesses = number_guessing_game(random_number)
-            wins += f_wins
-            too_high += f_too_high
-            too_low += f_too_low
-            user_guesses += f_user_guesses
-            print(title_screen)
-
-        # selects "impossible" mode.
-        elif user_mode_selection == 4:
-            random_number = np.random.randint(1,1000000)
-            print("Guess the random number between 0-1000000")
-            f_wins, f_too_high, f_too_low, f_user_guesses = number_guessing_game(random_number)
-            wins += f_wins
-            too_high += f_too_high
-            too_low += f_too_low
-            user_guesses += f_user_guesses
-            print(title_screen)
-
-        # select "custom" mode.
-        elif user_mode_selection == 5:
-            user_number_selection = int(input("Select custom number: "))
-            random_number = np.random.randint(1,user_number_selection)
-            print(f"Guess the random number between 0-{user_number_selection}")
-            f_wins, f_too_high, f_too_low, f_user_guesses = number_guessing_game(random_number)
-            wins += f_wins
-            too_high += f_too_high
-            too_low += f_too_low
-            user_guesses += f_user_guesses
-            print(title_screen)
+            number_guessing_game() # inputs the random number into the function (that is then used for the game).
 
         # selects AI MODE
         elif user_mode_selection == 6:
@@ -413,7 +419,7 @@ while True: # while loop so game doesn't end after game is finished.
                     print(ai_model_info)
 
                 elif ai_mode_select == "7":
-                    print(ai_stats_screen)
+                    print(ai_stats_screen())
 
                 elif ai_mode_select == "0":
                     in_ai_menu = False
@@ -426,7 +432,7 @@ while True: # while loop so game doesn't end after game is finished.
 
         # prints the users stats. Vars listed above.
         elif user_mode_selection == 7:
-            print(stats_screen) # these are the global stats (not f stats)
+            print(user_stats_screen()) # these are the global stats (not f stats)
 
         # ends program.
         elif user_mode_selection == 0:
